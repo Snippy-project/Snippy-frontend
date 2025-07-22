@@ -57,7 +57,7 @@ const router = createRouter({
       meta: { requiresAuth: false },
     },
     {
-      path: '/reset-password/:token',
+      path: '/reset-password',
       name: 'reset-password',
       component: ResetPassword,
       meta: { requiresAuth: false },

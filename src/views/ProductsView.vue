@@ -9,14 +9,12 @@ import api from '@/services/api'
 const router = useRouter()
 const authStore = useAuthStore()
 
-// 響應式數據
 const loading = ref(false)
 const products = ref([])
 const purchasing = ref(null)
 const showConfirmDialog = ref(false)
 const selectedProduct = ref(null)
 
-// 取得商品列表
 const fetchProducts = async () => {
   loading.value = true
   try {
@@ -31,13 +29,11 @@ const fetchProducts = async () => {
   }
 }
 
-// 購買商品
 const purchaseProduct = (product) => {
   selectedProduct.value = product
   showConfirmDialog.value = true
 }
 
-// 確認購買
 const confirmPurchase = async () => {
   if (!selectedProduct.value) return
 
@@ -51,11 +47,9 @@ const confirmPurchase = async () => {
       ElMessage.success('訂單創建成功，即將跳轉至付款頁面')
       showConfirmDialog.value = false
 
-      // 跳轉到付款頁面
       const paymentUrl = `/api/orders/${response.data.orderId}/payment`
       window.open(paymentUrl, '_blank')
 
-      // 跳轉到訂單頁面
       setTimeout(() => {
         router.push('/orders')
       }, 1000)
@@ -67,14 +61,12 @@ const confirmPurchase = async () => {
   }
 }
 
-// 取得週期文字
 const getPeriodText = (days) => {
   if (days === 30) return '月'
   if (days === 365) return '年'
   return `${days}天`
 }
 
-// 取得購買按鈕文字
 const getPurchaseButtonText = (product) => {
   if (product.productType === 'quota') {
     return '立即購買'
@@ -83,7 +75,6 @@ const getPurchaseButtonText = (product) => {
   }
 }
 
-// 取得購買說明
 const getPurchaseDescription = (product) => {
   if (product.productType === 'quota') {
     return `購買後將立即增加 ${product.quotaAmount} 個短網址配額，配額永久有效。`
@@ -95,7 +86,6 @@ const getPurchaseDescription = (product) => {
   return ''
 }
 
-// 初始化
 onMounted(() => {
   fetchProducts()
 })
@@ -104,13 +94,11 @@ onMounted(() => {
 <template>
   <div class="products-page">
     <div class="products-container">
-      <!-- 頁面標題 -->
       <div class="page-header">
         <h1>選擇方案</h1>
         <p>選擇最適合您需求的方案，立即開始使用短網址服務</p>
       </div>
 
-      <!-- 方案卡片 -->
       <div v-if="loading" class="loading-container">
         <el-skeleton :rows="4" animated />
       </div>
@@ -118,7 +106,6 @@ onMounted(() => {
       <div v-else class="products-grid">
         <div v-for="product in products" :key="product.id" class="product-card">
           <el-card>
-            <!-- 推薦標籤 -->
             <div
               v-if="product.productType === 'quota' && product.quotaAmount === 100"
               class="recommended-badge"
@@ -126,7 +113,6 @@ onMounted(() => {
               推薦
             </div>
 
-            <!-- 卡片標題 -->
             <div class="product-header">
               <h3>{{ product.name }}</h3>
               <div class="product-price">
@@ -137,12 +123,10 @@ onMounted(() => {
               </div>
             </div>
 
-            <!-- 商品描述 -->
             <div class="product-description">
               <p>{{ product.description }}</p>
             </div>
 
-            <!-- 商品特色 -->
             <div class="product-features">
               <ul>
                 <li v-for="feature in product.features" :key="feature">
@@ -152,7 +136,6 @@ onMounted(() => {
               </ul>
             </div>
 
-            <!-- 購買按鈕 -->
             <div class="product-footer">
               <el-button
                 v-if="!authStore.isLoggedIn"
@@ -180,7 +163,6 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- 購買確認對話框 -->
     <el-dialog v-model="showConfirmDialog" title="確認購買" width="400px" align-center>
       <div v-if="selectedProduct" class="confirm-content">
         <div class="product-summary">
@@ -377,7 +359,6 @@ onMounted(() => {
   gap: 12px;
 }
 
-/* 響應式設計 */
 @media (max-width: 768px) {
   .products-container {
     padding: 20px 16px;

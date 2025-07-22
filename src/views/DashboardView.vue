@@ -8,7 +8,6 @@ import CreateUrlDialog from '@/components/CreateUrlDialog.vue'
 
 const authStore = useAuthStore()
 
-// 數據
 const userStats = ref({
   quota: null,
   totalUrls: 0,
@@ -18,7 +17,6 @@ const recentUrls = ref([])
 const activeSubscriptions = ref([])
 const showCreateUrl = ref(false)
 
-// 取得用戶統計
 const fetchUserStats = async () => {
   try {
     const [profileRes, quotaRes] = await Promise.all([
@@ -42,7 +40,6 @@ const fetchUserStats = async () => {
   }
 }
 
-// 取得最近的短網址
 const fetchRecentUrls = async () => {
   try {
     const response = await api.get('/urls?page=1&limit=5')
@@ -54,18 +51,15 @@ const fetchRecentUrls = async () => {
   }
 }
 
-// 處理短網址創建成功
 const handleUrlCreated = () => {
   fetchUserStats()
   fetchRecentUrls()
 }
 
-// 格式化日期
 const formatDate = (date) => {
   return dayjs(date).format('YYYY-MM-DD')
 }
 
-// 取得訂閱名稱
 const getSubscriptionName = (type) => {
   const names = {
     custom_domain: '自訂域名（月費）',
@@ -74,7 +68,6 @@ const getSubscriptionName = (type) => {
   return names[type] || type
 }
 
-// 初始化
 onMounted(() => {
   fetchUserStats()
   fetchRecentUrls()
@@ -84,13 +77,11 @@ onMounted(() => {
 <template>
   <div class="dashboard">
     <div class="dashboard-container">
-      <!-- 頁面標題 -->
       <div class="dashboard-header">
         <h1>主控臺</h1>
         <p>歡迎回來，{{ authStore.user?.username }}！</p>
       </div>
 
-      <!-- 統計卡片 -->
       <el-row :gutter="20" class="stats-row">
         <el-col :xs="24" :md="8">
           <el-card class="stat-card">
@@ -135,7 +126,6 @@ onMounted(() => {
         </el-col>
       </el-row>
 
-      <!-- 快速操作 -->
       <el-card class="mt-4">
         <template #header>
           <span>快速操作</span>
@@ -156,7 +146,6 @@ onMounted(() => {
         </div>
       </el-card>
 
-      <!-- 最近的短網址 -->
       <el-card class="mt-4">
         <template #header>
           <div class="card-header">
@@ -167,7 +156,6 @@ onMounted(() => {
         <RecentUrls :urls="recentUrls" @refresh="fetchRecentUrls" />
       </el-card>
 
-      <!-- 訂閱狀態 -->
       <el-card v-if="activeSubscriptions.length > 0" class="mt-4">
         <template #header>
           <span>我的訂閱</span>
@@ -190,7 +178,6 @@ onMounted(() => {
       </el-card>
     </div>
 
-    <!-- 創建短網址對話框 -->
     <CreateUrlDialog v-model="showCreateUrl" @created="handleUrlCreated" />
   </div>
 </template>
@@ -280,12 +267,6 @@ onMounted(() => {
   gap: 12px;
 }
 
-@media (max-width: 768px) {
-  .quick-actions {
-    flex-direction: column;
-  }
-}
-
 .action-btn {
   width: 100%;
 }
@@ -321,10 +302,13 @@ onMounted(() => {
   margin-top: 24px;
 }
 
-/* 響應式設計 */
 @media (max-width: 768px) {
   .dashboard {
     padding: 16px;
+  }
+
+  .quick-actions {
+    flex-direction: column;
   }
 
   .dashboard-header h1 {

@@ -13,7 +13,6 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'created'])
 
-// 響應式數據
 const formRef = ref()
 const loading = ref(false)
 const showResult = ref(false)
@@ -21,7 +20,6 @@ const quota = ref(null)
 const customDomains = ref([])
 const createdUrl = ref(null)
 
-// 表單數據
 const form = ref({
   originalUrl: '',
   title: '',
@@ -34,7 +32,6 @@ const dialogVisible = computed({
   set: (value) => emit('update:modelValue', value),
 })
 
-// 驗證規則
 const rules = {
   originalUrl: [
     { required: true, message: '請輸入原始網址', trigger: 'blur' },
@@ -212,7 +209,6 @@ onMounted(() => {
         </el-select>
       </el-form-item>
 
-      <!-- 配額提醒 -->
       <el-alert
         v-if="quota && quota.remaining <= 0"
         title="配額不足"
@@ -248,7 +244,6 @@ onMounted(() => {
       </div>
     </template>
 
-    <!-- 成功結果對話框 -->
     <el-dialog
       v-model="showResult"
       title="短網址創建成功！"
@@ -345,7 +340,6 @@ onMounted(() => {
   gap: 12px;
 }
 
-/* 響應式設計 */
 @media (max-width: 768px) {
   .url-copy {
     flex-direction: column;

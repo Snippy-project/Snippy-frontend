@@ -13,12 +13,10 @@ const userQuota = ref(null)
 
 const activeIndex = computed(() => route.path)
 
-// 處理選單選擇
 const handleMenuSelect = (index) => {
   router.push(index)
 }
 
-// 處理用戶下拉選單
 const handleUserCommand = async (command) => {
   switch (command) {
     case 'profile':
@@ -33,7 +31,6 @@ const handleUserCommand = async (command) => {
   }
 }
 
-// 處理登出
 const handleLogout = async () => {
   try {
     await ElMessageBox.confirm('確定要登出嗎？', '確認登出', {
@@ -47,7 +44,6 @@ const handleLogout = async () => {
   } catch {}
 }
 
-// 取得用戶配額
 const fetchUserQuota = async () => {
   if (!authStore.isLoggedIn) return
 
@@ -61,7 +57,6 @@ const fetchUserQuota = async () => {
   }
 }
 
-// 監聽登入狀態變化
 onMounted(() => {
   if (authStore.isLoggedIn) {
     fetchUserQuota()
@@ -80,7 +75,6 @@ onMounted(() => {
           <span class="brand-name">Snippy</span>
         </div>
 
-        <!-- 導航選單 -->
         <el-menu
           v-if="authStore.isLoggedIn"
           :default-active="activeIndex"
@@ -102,24 +96,19 @@ onMounted(() => {
           </el-menu-item>
         </el-menu>
 
-        <!-- 右側操作區 -->
         <div class="navbar-actions">
-          <!-- 未登入狀態 -->
           <template v-if="!authStore.isLoggedIn">
             <el-button @click="$router.push('/products')"> 查看方案 </el-button>
             <el-button @click="$router.push('/login')"> 登入 </el-button>
             <el-button type="primary" @click="$router.push('/register')"> 註冊 </el-button>
           </template>
 
-          <!-- 已登入狀態 -->
           <template v-else>
-            <!-- 額度顯示 -->
             <div v-if="userQuota" class="quota-display">
               <el-icon><Coin /></el-icon>
               <span>{{ userQuota.remaining }}/{{ userQuota.total }}</span>
             </div>
 
-            <!-- 用戶選單 -->
             <el-dropdown @command="handleUserCommand">
               <div class="user-dropdown">
                 <span class="username">{{ authStore.user?.username }}</span>
@@ -227,7 +216,6 @@ onMounted(() => {
   color: #909399;
 }
 
-/* 響應式設計 */
 @media (max-width: 768px) {
   .navbar-content {
     padding: 0 16px;

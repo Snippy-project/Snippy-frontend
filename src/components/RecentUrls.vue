@@ -14,7 +14,6 @@ const props = defineProps({
 
 const emit = defineEmits(['refresh', 'create'])
 
-// 響應式數據
 const showEditDialog = ref(false)
 const editingUrl = ref(null)
 const updating = ref(false)
@@ -23,13 +22,11 @@ const editForm = reactive({
   title: '',
 })
 
-// 複製網址
 const copyUrl = async (url) => {
   try {
     await navigator.clipboard.writeText(url)
     ElMessage.success('已複製到剪貼板')
   } catch (error) {
-    // 如果 Clipboard API 不可用，使用 fallback 方法
     try {
       const textArea = document.createElement('textarea')
       textArea.value = url
@@ -47,14 +44,12 @@ const copyUrl = async (url) => {
   }
 }
 
-// 編輯網址
 const editUrl = (url) => {
   editingUrl.value = url
   editForm.title = url.title || ''
   showEditDialog.value = true
 }
 
-// 處理更新
 const handleUpdate = async () => {
   if (!editingUrl.value) return
 
@@ -76,7 +71,6 @@ const handleUpdate = async () => {
   }
 }
 
-// 刪除網址
 const deleteUrl = async (url) => {
   try {
     await ElMessageBox.confirm(`確定要刪除短網址 "${url.title || url.shortUrl}" 嗎？`, '確認刪除', {
@@ -98,13 +92,11 @@ const deleteUrl = async (url) => {
   }
 }
 
-// 截斷長網址
 const truncateUrl = (url, maxLength = 50) => {
   if (url.length <= maxLength) return url
   return url.substring(0, maxLength) + '...'
 }
 
-// 格式化日期
 const formatDate = (date) => {
   return dayjs(date).format('MM-DD HH:mm')
 }
@@ -170,7 +162,6 @@ const formatDate = (date) => {
       </div>
     </div>
 
-    <!-- 編輯對話框 -->
     <el-dialog v-model="showEditDialog" title="編輯短網址" width="400px" align-center>
       <el-form v-if="editingUrl" :model="editForm" label-width="80px">
         <el-form-item label="標題">
@@ -312,7 +303,6 @@ const formatDate = (date) => {
   gap: 12px;
 }
 
-/* 響應式設計 */
 @media (max-width: 768px) {
   .url-header {
     flex-direction: column;
