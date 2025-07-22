@@ -71,108 +71,93 @@ onMounted(() => {
 
 <template>
   <el-affix>
-    <el-container class="navbar">
-      <el-header height="64px" class="navbar-header">
-        <div class="navbar-content">
-          <!-- Logo 和品牌名 -->
-          <div class="brand" @click="$router.push('/')">
-            <el-icon size="28" color="#409EFF">
-              <Link />
-            </el-icon>
-            <span class="brand-name">Snippy</span>
-          </div>
-
-          <!-- 導航選單 -->
-          <el-menu
-            v-if="authStore.isLoggedIn"
-            :default-active="activeIndex"
-            mode="horizontal"
-            class="navbar-menu"
-            @select="handleMenuSelect"
-          >
-            <el-menu-item index="/dashboard">
-              <el-icon><House /></el-icon>
-              <span>儀表板</span>
-            </el-menu-item>
-            <el-menu-item index="/urls">
-              <el-icon><Link /></el-icon>
-              <span>我的短網址</span>
-            </el-menu-item>
-            <el-menu-item index="/products">
-              <el-icon><ShoppingBag /></el-icon>
-              <span>購買方案</span>
-            </el-menu-item>
-            <el-menu-item index="/orders">
-              <el-icon><List /></el-icon>
-              <span>訂單記錄</span>
-            </el-menu-item>
-          </el-menu>
-
-          <!-- 右側操作區 -->
-          <div class="navbar-actions">
-            <!-- 未登入狀態 -->
-            <template v-if="!authStore.isLoggedIn">
-              <el-button @click="$router.push('/products')"> 查看方案 </el-button>
-              <el-button @click="$router.push('/login')"> 登入 </el-button>
-              <el-button type="primary" @click="$router.push('/register')"> 註冊 </el-button>
-            </template>
-
-            <!-- 已登入狀態 -->
-            <template v-else>
-              <!-- 配額顯示 -->
-              <div v-if="userQuota" class="quota-display">
-                <el-icon><Coin /></el-icon>
-                <span>{{ userQuota.remaining }}/{{ userQuota.total }}</span>
-              </div>
-
-              <!-- 用戶選單 -->
-              <el-dropdown @command="handleUserCommand">
-                <div class="user-dropdown">
-                  <el-avatar :size="32">
-                    <el-icon><User /></el-icon>
-                  </el-avatar>
-                  <span class="username">{{ authStore.user?.username }}</span>
-                  <el-icon class="dropdown-icon"><ArrowDown /></el-icon>
-                </div>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item command="profile">
-                      <el-icon><User /></el-icon>
-                      個人資料
-                    </el-dropdown-item>
-                    <el-dropdown-item command="quota">
-                      <el-icon><Coin /></el-icon>
-                      配額管理
-                    </el-dropdown-item>
-                    <el-dropdown-item divided command="logout">
-                      <el-icon><SwitchButton /></el-icon>
-                      登出
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </template>
-          </div>
+    <nav class="navbar">
+      <div class="navbar-content">
+        <div class="brand" @click="$router.push('/')">
+          <el-icon size="28" color="#409EFF">
+            <Link />
+          </el-icon>
+          <span class="brand-name">Snippy</span>
         </div>
-      </el-header>
-    </el-container>
+
+        <!-- 導航選單 -->
+        <el-menu
+          v-if="authStore.isLoggedIn"
+          :default-active="activeIndex"
+          mode="horizontal"
+          class="navbar-menu"
+          @select="handleMenuSelect"
+        >
+          <el-menu-item index="/dashboard">
+            <el-icon><House /></el-icon>
+            <span>儀表板</span>
+          </el-menu-item>
+          <el-menu-item index="/urls">
+            <el-icon><Link /></el-icon>
+            <span>我的短網址</span>
+          </el-menu-item>
+          <el-menu-item index="/products">
+            <el-icon><ShoppingBag /></el-icon>
+            <span>購買方案</span>
+          </el-menu-item>
+          <el-menu-item index="/orders">
+            <el-icon><List /></el-icon>
+            <span>訂單記錄</span>
+          </el-menu-item>
+        </el-menu>
+
+        <!-- 右側操作區 -->
+        <div class="navbar-actions">
+          <!-- 未登入狀態 -->
+          <template v-if="!authStore.isLoggedIn">
+            <el-button @click="$router.push('/products')"> 查看方案 </el-button>
+            <el-button @click="$router.push('/login')"> 登入 </el-button>
+            <el-button type="primary" @click="$router.push('/register')"> 註冊 </el-button>
+          </template>
+
+          <!-- 已登入狀態 -->
+          <template v-else>
+            <!-- 額度顯示 -->
+            <div v-if="userQuota" class="quota-display">
+              <el-icon><Coin /></el-icon>
+              <span>{{ userQuota.remaining }}/{{ userQuota.total }}</span>
+            </div>
+
+            <!-- 用戶選單 -->
+            <el-dropdown @command="handleUserCommand">
+              <div class="user-dropdown">
+                <span class="username">{{ authStore.user?.username }}</span>
+                <el-icon class="dropdown-icon"><ArrowDown /></el-icon>
+              </div>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="profile">
+                    <el-icon><User /></el-icon>
+                    個人資料
+                  </el-dropdown-item>
+                  <el-dropdown-item command="quota">
+                    <el-icon><Coin /></el-icon>
+                    配額管理
+                  </el-dropdown-item>
+                  <el-dropdown-item divided command="logout">
+                    <el-icon><SwitchButton /></el-icon>
+                    登出
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </template>
+        </div>
+      </div>
+    </nav>
   </el-affix>
 </template>
 
 <style scoped>
 .navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
+  height: 64px;
   background: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.navbar-header {
-  padding: 0;
-  background: white;
 }
 
 .navbar-content {
