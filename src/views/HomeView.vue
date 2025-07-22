@@ -14,7 +14,6 @@ const scrollToFeatures = () => {
 
 <template>
   <div class="home-page">
-    <!-- Hero Section -->
     <section class="hero-section">
       <div class="hero-container">
         <div class="hero-content">
@@ -51,7 +50,6 @@ const scrollToFeatures = () => {
               </el-button>
             </div>
 
-            <!-- 註冊提示 -->
             <div v-if="!authStore.isLoggedIn" class="register-prompt">
               <div class="prompt-box">
                 <el-icon size="20" color="#E6A23C"><Warning /></el-icon>
@@ -86,7 +84,6 @@ const scrollToFeatures = () => {
       </div>
     </section>
 
-    <!-- Features Section -->
     <section id="features" class="features-section">
       <div class="features-container">
         <div class="section-header">
@@ -126,7 +123,6 @@ const scrollToFeatures = () => {
       </div>
     </section>
 
-    <!-- Pricing Section -->
     <section class="pricing-section">
       <div class="pricing-container">
         <div class="section-header">
@@ -238,7 +234,6 @@ const scrollToFeatures = () => {
       </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
       <div class="footer-container">
         <div class="footer-content">
@@ -292,7 +287,6 @@ const scrollToFeatures = () => {
   overflow-x: hidden;
 }
 
-/* Hero Section */
 .hero-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 60vh;
@@ -444,7 +438,6 @@ const scrollToFeatures = () => {
   margin: 0;
 }
 
-/* Features Section */
 .features-section {
   padding: 100px 0;
   background: #f8fafc;
@@ -510,7 +503,6 @@ const scrollToFeatures = () => {
   margin: 0;
 }
 
-/* Pricing Section */
 .pricing-section {
   padding: 100px 0;
   background: white;
@@ -605,7 +597,6 @@ const scrollToFeatures = () => {
   color: #606266;
 }
 
-/* Footer */
 .footer {
   background: #1f2937;
   color: white;
@@ -686,29 +677,7 @@ const scrollToFeatures = () => {
   margin: 0;
 }
 
-/* 響應式設計 */
-@media (max-width: 1024px) {
-  .hero-content {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    text-align: center;
-  }
-
-  .hero-title {
-    font-size: 40px;
-  }
-
-  .features-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
-  }
-
-  .footer-content {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-}
-
+/* 響應式設計 - 只保留 768px 斷點 */
 @media (max-width: 768px) {
   .hero-section {
     padding: 40px 0;
@@ -717,6 +686,12 @@ const scrollToFeatures = () => {
 
   .hero-container {
     padding: 0 16px;
+  }
+
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
   }
 
   .hero-title {
@@ -764,6 +739,11 @@ const scrollToFeatures = () => {
     padding: 30px 20px;
   }
 
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
   .footer-links {
     grid-template-columns: 1fr;
     gap: 30px;
@@ -784,7 +764,6 @@ html {
   scroll-behavior: smooth;
 }
 
-/* 自定義滾動條 */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -800,5 +779,21 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
 }
 </style>
