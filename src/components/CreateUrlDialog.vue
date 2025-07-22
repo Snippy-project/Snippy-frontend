@@ -45,7 +45,6 @@ const rules = {
           return
         }
 
-        // 簡單的 URL 格式驗證
         const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
         const hasProtocol = /^https?:\/\//.test(value)
         const testUrl = hasProtocol ? value : `https://${value}`
@@ -62,7 +61,6 @@ const rules = {
   title: [{ max: 100, message: '標題長度不能超過 100 個字符', trigger: 'blur' }],
 }
 
-// 重置表單
 const resetForm = () => {
   form.value = {
     originalUrl: '',
@@ -72,7 +70,6 @@ const resetForm = () => {
   formRef.value?.clearValidate()
 }
 
-// 處理提交
 const handleSubmit = async () => {
   try {
     const valid = await formRef.value.validate()
@@ -96,15 +93,12 @@ const handleSubmit = async () => {
   }
 }
 
-// 複製到剪貼板 - 使用原生 Clipboard API
 const copyToClipboard = async (text) => {
   try {
     if (navigator.clipboard && window.isSecureContext) {
-      // 使用現代 Clipboard API
       await navigator.clipboard.writeText(text)
       ElMessage.success('已複製到剪貼板')
     } else {
-      // 備用方案：使用傳統方法
       const textArea = document.createElement('textarea')
       textArea.value = text
       textArea.style.position = 'fixed'
@@ -129,19 +123,16 @@ const copyToClipboard = async (text) => {
   }
 }
 
-// 再創建一個
 const handleCreateAnother = () => {
   showResult.value = false
   resetForm()
 }
 
-// 關閉所有對話框
 const handleClose = () => {
   showResult.value = false
   dialogVisible.value = false
 }
 
-// 取得用戶配額
 const fetchQuota = async () => {
   try {
     const response = await api.get('/users/quota')
@@ -153,7 +144,6 @@ const fetchQuota = async () => {
   }
 }
 
-// 取得自訂域名
 const fetchCustomDomains = async () => {
   try {
     const response = await api.get('/users/domains')
@@ -165,7 +155,6 @@ const fetchCustomDomains = async () => {
   }
 }
 
-// 監聽對話框開啟
 watch(dialogVisible, (newValue) => {
   if (newValue) {
     fetchQuota()

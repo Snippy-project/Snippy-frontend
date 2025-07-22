@@ -1,19 +1,13 @@
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
 import NavBar from '@/components/NavBar.vue'
 
 const route = useRoute()
-const authStore = useAuthStore()
 
 const showNavbar = computed(() => {
   const hideNavbarRoutes = ['login', 'register', 'verify-email', 'reset-password']
   return !hideNavbarRoutes.includes(route.name)
-})
-
-onMounted(() => {
-  authStore.fetchUser()
 })
 </script>
 
