@@ -220,7 +220,7 @@ onMounted(() => {
         type="error"
         :closable="false"
         show-icon
-        class="mb-4"
+        class="quota-alert"
       />
 
       <el-alert
@@ -230,13 +230,13 @@ onMounted(() => {
         type="warning"
         :closable="false"
         show-icon
-        class="mb-4"
+        class="quota-alert"
       />
     </el-form>
 
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="dialogVisible = false"> 取消 </el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
         <el-button
           type="primary"
           :loading="loading"
@@ -288,8 +288,8 @@ onMounted(() => {
 
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="handleCreateAnother"> 再創建一個 </el-button>
-          <el-button type="primary" @click="handleClose"> 完成 </el-button>
+          <el-button @click="handleCreateAnother">再創建一個</el-button>
+          <el-button type="primary" @click="handleClose">完成</el-button>
         </div>
       </template>
     </el-dialog>
@@ -297,7 +297,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.mb-4 {
+.quota-alert {
   margin-bottom: 16px;
 }
 
@@ -346,7 +346,7 @@ onMounted(() => {
 }
 
 /* 響應式設計 */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .url-copy {
     flex-direction: column;
   }

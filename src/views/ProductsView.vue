@@ -1,175 +1,3 @@
-<template>
-  <div class="products-page">
-    <div class="products-container">
-      <!-- 頁面標題 -->
-      <div class="page-header">
-        <h1>選擇方案</h1>
-        <p>選擇最適合您需求的方案，立即開始使用短網址服務</p>
-      </div>
-
-      <!-- 方案卡片 -->
-      <div v-if="loading" class="loading-container">
-        <el-skeleton :rows="4" animated />
-      </div>
-
-      <div v-else class="products-grid">
-        <div
-          v-for="product in products"
-          :key="product.id"
-          class="product-card"
-          :class="{
-            recommended: product.productType === 'quota' && product.quotaAmount === 100,
-            premium: product.productType.includes('custom_domain'),
-          }"
-        >
-          <el-card>
-            <!-- 推薦標籤 -->
-            <div
-              v-if="product.productType === 'quota' && product.quotaAmount === 100"
-              class="recommended-badge"
-            >
-              推薦
-            </div>
-
-            <!-- 卡片標題 -->
-            <div class="product-header">
-              <h3>{{ product.name }}</h3>
-              <div class="product-price">
-                <span class="price">{{ product.priceDisplay }}</span>
-                <span v-if="product.subscriptionDurationDays" class="period">
-                  / {{ getPeriodText(product.subscriptionDurationDays) }}
-                </span>
-              </div>
-            </div>
-
-            <!-- 商品描述 -->
-            <div class="product-description">
-              <p>{{ product.description }}</p>
-            </div>
-
-            <!-- 商品特色 -->
-            <div class="product-features">
-              <ul>
-                <li v-for="feature in product.features" :key="feature">
-                  <el-icon color="#67C23A"><Check /></el-icon>
-                  <span>{{ feature }}</span>
-                </li>
-              </ul>
-            </div>
-
-            <!-- 購買按鈕 -->
-            <div class="product-footer">
-              <el-button
-                v-if="!authStore.isLoggedIn"
-                type="primary"
-                size="large"
-                @click="$router.push('/login')"
-                style="width: 100%"
-              >
-                登入後購買
-              </el-button>
-
-              <el-button
-                v-else
-                type="primary"
-                size="large"
-                :loading="purchasing === product.id"
-                @click="purchaseProduct(product)"
-                style="width: 100%"
-                :class="{
-                  'premium-button': product.productType.includes('custom_domain'),
-                }"
-              >
-                {{ getPurchaseButtonText(product) }}
-              </el-button>
-            </div>
-          </el-card>
-        </div>
-      </div>
-
-      <!-- 常見問題 -->
-      <el-card class="faq-section">
-        <template #header>
-          <h2>常見問題</h2>
-        </template>
-
-        <el-collapse accordion>
-          <el-collapse-item title="配額是如何計算的？" name="1">
-            <p>每創建一個短網址消耗 1 個配額。配額購買後永久有效，不會過期。</p>
-          </el-collapse-item>
-
-          <el-collapse-item title="自訂域名有什麼好處？" name="2">
-            <p>使用自訂域名可以提升品牌形象，讓短網址更具專業性。例如：your-brand.com/abc123</p>
-          </el-collapse-item>
-
-          <el-collapse-item title="月費和年費有什麼區別？" name="3">
-            <p>功能完全相同，年費方案更加划算，相當於 10 個月的價格享受 12 個月的服務。</p>
-          </el-collapse-item>
-
-          <el-collapse-item title="可以隨時取消訂閱嗎？" name="4">
-            <p>可以的，您可以隨時停止續費。已付費的期間內仍可正常使用服務。</p>
-          </el-collapse-item>
-
-          <el-collapse-item title="支援哪些付款方式？" name="5">
-            <p>目前支援信用卡付款，透過綠界金流提供安全可靠的付款環境。</p>
-          </el-collapse-item>
-        </el-collapse>
-      </el-card>
-
-      <!-- 立即開始 -->
-      <div class="cta-section">
-        <h2>準備開始了嗎？</h2>
-        <p>立即註冊，免費獲得 20 個短網址配額</p>
-        <div class="cta-buttons">
-          <el-button
-            v-if="!authStore.isLoggedIn"
-            type="primary"
-            size="large"
-            @click="$router.push('/register')"
-          >
-            免費註冊
-          </el-button>
-          <el-button v-else type="primary" size="large" @click="$router.push('/dashboard')">
-            前往儀表板
-          </el-button>
-          <el-button size="large" @click="scrollToProducts"> 查看方案 </el-button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 購買確認對話框 -->
-    <el-dialog v-model="showConfirmDialog" title="確認購買" width="400px" align-center>
-      <div v-if="selectedProduct" class="confirm-content">
-        <div class="product-summary">
-          <h4>{{ selectedProduct.name }}</h4>
-          <p>{{ selectedProduct.description }}</p>
-          <div class="price-summary">
-            <span>金額：</span>
-            <span class="price">{{ selectedProduct.priceDisplay }}</span>
-          </div>
-        </div>
-
-        <el-alert
-          title="購買說明"
-          :description="getPurchaseDescription(selectedProduct)"
-          type="info"
-          :closable="false"
-          show-icon
-        />
-      </div>
-
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="showConfirmDialog = false"> 取消 </el-button>
-          <el-button type="primary" :loading="purchasing" @click="confirmPurchase">
-            確認購買
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
-  </div>
-</template>
-
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -227,7 +55,7 @@ const confirmPurchase = async () => {
       const paymentUrl = `/api/orders/${response.data.orderId}/payment`
       window.open(paymentUrl, '_blank')
 
-      // 可選：跳轉到訂單頁面
+      // 跳轉到訂單頁面
       setTimeout(() => {
         router.push('/orders')
       }, 1000)
@@ -267,24 +95,128 @@ const getPurchaseDescription = (product) => {
   return ''
 }
 
-// 滾動到商品區域
-const scrollToProducts = () => {
-  const element = document.querySelector('.products-grid')
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth' })
-  }
-}
-
 // 初始化
 onMounted(() => {
   fetchProducts()
 })
 </script>
 
+<template>
+  <div class="products-page">
+    <div class="products-container">
+      <!-- 頁面標題 -->
+      <div class="page-header">
+        <h1>選擇方案</h1>
+        <p>選擇最適合您需求的方案，立即開始使用短網址服務</p>
+      </div>
+
+      <!-- 方案卡片 -->
+      <div v-if="loading" class="loading-container">
+        <el-skeleton :rows="4" animated />
+      </div>
+
+      <div v-else class="products-grid">
+        <div v-for="product in products" :key="product.id" class="product-card">
+          <el-card>
+            <!-- 推薦標籤 -->
+            <div
+              v-if="product.productType === 'quota' && product.quotaAmount === 100"
+              class="recommended-badge"
+            >
+              推薦
+            </div>
+
+            <!-- 卡片標題 -->
+            <div class="product-header">
+              <h3>{{ product.name }}</h3>
+              <div class="product-price">
+                <span class="price">{{ product.priceDisplay }}</span>
+                <span v-if="product.subscriptionDurationDays" class="period">
+                  / {{ getPeriodText(product.subscriptionDurationDays) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- 商品描述 -->
+            <div class="product-description">
+              <p>{{ product.description }}</p>
+            </div>
+
+            <!-- 商品特色 -->
+            <div class="product-features">
+              <ul>
+                <li v-for="feature in product.features" :key="feature">
+                  <el-icon color="#67C23A"><Check /></el-icon>
+                  <span>{{ feature }}</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- 購買按鈕 -->
+            <div class="product-footer">
+              <el-button
+                v-if="!authStore.isLoggedIn"
+                type="primary"
+                size="large"
+                @click="$router.push('/login')"
+                class="purchase-btn"
+              >
+                登入後購買
+              </el-button>
+
+              <el-button
+                v-else
+                type="primary"
+                size="large"
+                :loading="purchasing === product.id"
+                @click="purchaseProduct(product)"
+                class="purchase-btn"
+              >
+                {{ getPurchaseButtonText(product) }}
+              </el-button>
+            </div>
+          </el-card>
+        </div>
+      </div>
+    </div>
+
+    <!-- 購買確認對話框 -->
+    <el-dialog v-model="showConfirmDialog" title="確認購買" width="400px" align-center>
+      <div v-if="selectedProduct" class="confirm-content">
+        <div class="product-summary">
+          <h4>{{ selectedProduct.name }}</h4>
+          <p>{{ selectedProduct.description }}</p>
+          <div class="price-summary">
+            <span>金額：</span>
+            <span class="price">{{ selectedProduct.priceDisplay }}</span>
+          </div>
+        </div>
+
+        <el-alert
+          title="購買說明"
+          :description="getPurchaseDescription(selectedProduct)"
+          type="info"
+          :closable="false"
+          show-icon
+        />
+      </div>
+
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="showConfirmDialog = false">取消</el-button>
+          <el-button type="primary" :loading="purchasing" @click="confirmPurchase">
+            確認購買
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
+  </div>
+</template>
+
 <style scoped>
 .products-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: #f5f7fa;
 }
 
 .products-container {
@@ -319,26 +251,15 @@ onMounted(() => {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 24px;
-  margin-bottom: 60px;
 }
 
 .product-card {
   position: relative;
-  transition: transform 0.3s ease;
 }
 
 .product-card:hover {
-  transform: translateY(-8px);
-}
-
-.product-card.recommended .el-card {
-  border: 2px solid #409eff;
-  box-shadow: 0 8px 30px rgba(64, 158, 255, 0.15);
-}
-
-.product-card.premium .el-card {
-  border: 2px solid #e6a23c;
-  box-shadow: 0 8px 30px rgba(230, 162, 60, 0.15);
+  transform: translateY(-4px);
+  transition: transform 0.3s ease;
 }
 
 .recommended-badge {
@@ -415,60 +336,8 @@ onMounted(() => {
   color: #606266;
 }
 
-.product-features li span {
-  line-height: 1.5;
-}
-
-.product-footer {
-  margin-top: auto;
-}
-
-.premium-button {
-  background: linear-gradient(135deg, #e6a23c 0%, #f56c6c 100%);
-  border: none;
-}
-
-.premium-button:hover {
-  background: linear-gradient(135deg, #d19e11 0%, #f54545 100%);
-}
-
-.faq-section {
-  margin-bottom: 60px;
-  border-radius: 12px;
-}
-
-.faq-section h2 {
-  color: #303133;
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.cta-section {
-  text-align: center;
-  padding: 60px 20px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-}
-
-.cta-section h2 {
-  font-size: 28px;
-  color: #303133;
-  margin-bottom: 16px;
-  font-weight: 600;
-}
-
-.cta-section p {
-  font-size: 16px;
-  color: #606266;
-  margin-bottom: 32px;
-}
-
-.cta-buttons {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
+.purchase-btn {
+  width: 100%;
 }
 
 .confirm-content {
@@ -525,38 +394,10 @@ onMounted(() => {
   .products-grid {
     grid-template-columns: 1fr;
     gap: 20px;
-    margin-bottom: 40px;
-  }
-
-  .cta-section {
-    padding: 40px 20px;
-  }
-
-  .cta-section h2 {
-    font-size: 24px;
-  }
-
-  .cta-buttons {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .cta-buttons .el-button {
-    width: 200px;
-  }
-}
-
-@media (max-width: 480px) {
-  .products-container {
-    padding: 16px 12px;
   }
 
   .price {
     font-size: 28px;
-  }
-
-  .cta-buttons .el-button {
-    width: 100%;
   }
 }
 </style>
