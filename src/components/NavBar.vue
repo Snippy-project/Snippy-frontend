@@ -79,7 +79,7 @@ onMounted(() => {
             <el-icon size="28" color="#409EFF">
               <Link />
             </el-icon>
-            <span class="brand-name">短網址</span>
+            <span class="brand-name">Snippy</span>
           </div>
 
           <!-- 導航選單 -->
