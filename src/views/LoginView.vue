@@ -1,3 +1,75 @@
+<script setup>
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { Message, Lock } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+
+const router = useRouter()
+const authStore = useAuthStore()
+
+const loginFormRef = ref()
+const showForgotPassword = ref(false)
+
+const loginForm = reactive({
+  email: '',
+  password: '',
+  rememberMe: false,
+})
+
+const forgotForm = reactive({
+  email: '',
+})
+
+const loginRules = {
+  email: [
+    { required: true, message: '請輸入信箱', trigger: 'blur' },
+    { type: 'email', message: '請輸入正確的信箱格式', trigger: 'blur' },
+  ],
+  password: [
+    { required: true, message: '請輸入密碼', trigger: 'blur' },
+    { min: 6, message: '密碼長度至少 6 個字符', trigger: 'blur' },
+  ],
+}
+
+const handleLogin = async () => {
+  try {
+    const valid = await loginFormRef.value.validate()
+    if (!valid) return
+
+    const result = await authStore.login(loginForm)
+
+    if (result.success) {
+      router.push(result.redirectUrl || '/dashboard')
+    } else {
+      if (result.needsEmailVerification) {
+        ElMessage({
+          type: 'warning',
+          message: result.message,
+          duration: 5000,
+        })
+      }
+    }
+  } catch (error) {
+    console.error('登入失敗:', error)
+  }
+}
+
+const handleForgotPassword = async () => {
+  if (!forgotForm.email) {
+    ElMessage.warning('請輸入信箱')
+    return
+  }
+
+  const result = await authStore.forgotPassword(forgotForm.email)
+
+  if (result.success) {
+    showForgotPassword.value = false
+    forgotForm.email = ''
+  }
+}
+</script>
+
 <template>
   <div class="login-container">
     <el-card class="login-card">
@@ -62,7 +134,6 @@
       </div>
     </el-card>
 
-    <!-- 忘記密碼對話框 -->
     <el-dialog v-model="showForgotPassword" title="忘記密碼" width="400px" align-center>
       <el-form :model="forgotForm" label-width="0">
         <el-form-item>
@@ -86,84 +157,6 @@
     </el-dialog>
   </div>
 </template>
-
-<script setup>
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { Message, Lock } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
-
-const router = useRouter()
-const authStore = useAuthStore()
-
-const loginFormRef = ref()
-const showForgotPassword = ref(false)
-
-// 登入表單
-const loginForm = reactive({
-  email: '',
-  password: '',
-  rememberMe: false,
-})
-
-// 忘記密碼表單
-const forgotForm = reactive({
-  email: '',
-})
-
-// 驗證規則
-const loginRules = {
-  email: [
-    { required: true, message: '請輸入信箱', trigger: 'blur' },
-    { type: 'email', message: '請輸入正確的信箱格式', trigger: 'blur' },
-  ],
-  password: [
-    { required: true, message: '請輸入密碼', trigger: 'blur' },
-    { min: 6, message: '密碼長度至少 6 個字符', trigger: 'blur' },
-  ],
-}
-
-// 處理登入
-const handleLogin = async () => {
-  try {
-    const valid = await loginFormRef.value.validate()
-    if (!valid) return
-
-    const result = await authStore.login(loginForm)
-
-    if (result.success) {
-      router.push(result.redirectUrl || '/dashboard')
-    } else {
-      // 檢查是否需要驗證信箱
-      if (result.needsEmailVerification) {
-        ElMessage({
-          type: 'warning',
-          message: result.message,
-          duration: 5000,
-        })
-      }
-    }
-  } catch (error) {
-    console.error('登入失敗:', error)
-  }
-}
-
-// 處理忘記密碼
-const handleForgotPassword = async () => {
-  if (!forgotForm.email) {
-    ElMessage.warning('請輸入信箱')
-    return
-  }
-
-  const result = await authStore.forgotPassword(forgotForm.email)
-
-  if (result.success) {
-    showForgotPassword.value = false
-    forgotForm.email = ''
-  }
-}
-</script>
 
 <style scoped>
 .login-container {
@@ -213,7 +206,7 @@ const handleForgotPassword = async () => {
   font-size: 14px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .login-container {
     padding: 16px;
   }

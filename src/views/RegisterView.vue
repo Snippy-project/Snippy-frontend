@@ -1,10 +1,103 @@
+<script setup>
+import { ref, reactive } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { User, Message, Lock, CircleCheck, Phone } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+
+const authStore = useAuthStore()
+
+const registerFormRef = ref()
+const agreeTerms = ref(false)
+const showSuccess = ref(false)
+const showTerms = ref(false)
+const showPrivacy = ref(false)
+const resendLoading = ref(false)
+
+const registerForm = reactive({
+  username: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
+  phone: '',
+})
+
+const validateConfirmPassword = (rule, value, callback) => {
+  if (value === '') {
+    callback(new Error('請確認密碼'))
+  } else if (value !== registerForm.password) {
+    callback(new Error('兩次輸入的密碼不一致'))
+  } else {
+    callback()
+  }
+}
+
+const registerRules = {
+  username: [
+    { required: true, message: '請輸入用戶名', trigger: 'blur' },
+    { min: 2, max: 50, message: '用戶名長度在 2 到 50 個字符', trigger: 'blur' },
+    {
+      pattern: /^[a-zA-Z0-9\u4e00-\u9fa5_-]+$/,
+      message: '用戶名只能包含中英文、數字、底線和連字號',
+      trigger: 'blur',
+    },
+  ],
+  email: [
+    { required: true, message: '請輸入信箱', trigger: 'blur' },
+    { type: 'email', message: '請輸入正確的信箱格式', trigger: 'blur' },
+  ],
+  password: [
+    { required: true, message: '請輸入密碼', trigger: 'blur' },
+    { min: 6, message: '密碼長度至少 6 個字符', trigger: 'blur' },
+  ],
+  confirmPassword: [{ validator: validateConfirmPassword, trigger: 'blur' }],
+  phone: [
+    { required: true, message: "請輸入電話(無需加'-')", trigger: 'blur' },
+    { min: 10, message: '電話長度至少 10 個字符', trigger: 'blur' },
+  ],
+}
+
+const handleRegister = async () => {
+  try {
+    const valid = await registerFormRef.value.validate()
+    if (!valid) return
+
+    const result = await authStore.register({
+      username: registerForm.username,
+      email: registerForm.email,
+      password: registerForm.password,
+      phone: registerForm.phone,
+    })
+
+    if (result.success) {
+      showSuccess.value = true
+    }
+  } catch (error) {
+    console.error('註冊失敗:', error)
+  }
+}
+
+const resendEmail = async () => {
+  resendLoading.value = true
+  try {
+    const result = await authStore.resendVerification(registerForm.email)
+    if (result.success) {
+      ElMessage.success('驗證信已重新發送')
+    }
+  } catch (error) {
+    console.error('重新發送失敗:', error)
+  } finally {
+    resendLoading.value = false
+  }
+}
+</script>
+
 <template>
   <div class="register-container">
     <el-card class="register-card">
       <template #header>
         <div class="card-header">
           <h2>註冊帳號</h2>
-          <p>立即註冊，開始使用短網址服務</p>
+          <p>立即註冊，開始使用Snippy</p>
         </div>
       </template>
 
@@ -52,6 +145,15 @@
           />
         </el-form-item>
 
+        <el-form-item prop="phone">
+          <el-input
+            v-model="registerForm.phone"
+            placeholder="請輸入電話(無需加'-')"
+            type="tel"
+            :prefix-icon="Phone"
+          />
+        </el-form-item>
+
         <el-form-item>
           <el-checkbox v-model="agreeTerms" size="large">
             我已閱讀並同意
@@ -81,7 +183,6 @@
       </div>
     </el-card>
 
-    <!-- 註冊成功對話框 -->
     <el-dialog
       v-model="showSuccess"
       title="註冊成功！"
@@ -107,7 +208,6 @@
       </template>
     </el-dialog>
 
-    <!-- 服務條款對話框 -->
     <el-dialog v-model="showTerms" title="服務條款" width="600px" align-center>
       <div class="terms-content">
         <h4>1. 服務說明</h4>
@@ -129,7 +229,6 @@
       </div>
     </el-dialog>
 
-    <!-- 隱私政策對話框 -->
     <el-dialog v-model="showPrivacy" title="隱私政策" width="600px" align-center>
       <div class="privacy-content">
         <h4>1. 資料收集</h4>
@@ -152,100 +251,6 @@
     </el-dialog>
   </div>
 </template>
-
-<script setup>
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { User, Message, Lock, CircleCheck } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
-
-const router = useRouter()
-const authStore = useAuthStore()
-
-const registerFormRef = ref()
-const agreeTerms = ref(false)
-const showSuccess = ref(false)
-const showTerms = ref(false)
-const showPrivacy = ref(false)
-const resendLoading = ref(false)
-
-// 註冊表單
-const registerForm = reactive({
-  username: '',
-  email: '',
-  password: '',
-  confirmPassword: '',
-})
-
-// 確認密碼驗證
-const validateConfirmPassword = (rule, value, callback) => {
-  if (value === '') {
-    callback(new Error('請確認密碼'))
-  } else if (value !== registerForm.password) {
-    callback(new Error('兩次輸入的密碼不一致'))
-  } else {
-    callback()
-  }
-}
-
-// 驗證規則
-const registerRules = {
-  username: [
-    { required: true, message: '請輸入用戶名', trigger: 'blur' },
-    { min: 2, max: 50, message: '用戶名長度在 2 到 50 個字符', trigger: 'blur' },
-    {
-      pattern: /^[a-zA-Z0-9\u4e00-\u9fa5_-]+$/,
-      message: '用戶名只能包含中英文、數字、底線和連字號',
-      trigger: 'blur',
-    },
-  ],
-  email: [
-    { required: true, message: '請輸入信箱', trigger: 'blur' },
-    { type: 'email', message: '請輸入正確的信箱格式', trigger: 'blur' },
-  ],
-  password: [
-    { required: true, message: '請輸入密碼', trigger: 'blur' },
-    { min: 6, message: '密碼長度至少 6 個字符', trigger: 'blur' },
-  ],
-  confirmPassword: [{ validator: validateConfirmPassword, trigger: 'blur' }],
-}
-
-// 處理註冊
-const handleRegister = async () => {
-  try {
-    const valid = await registerFormRef.value.validate()
-    if (!valid) return
-
-    const result = await authStore.register({
-      username: registerForm.username,
-      email: registerForm.email,
-      password: registerForm.password,
-    })
-
-    if (result.success) {
-      showSuccess.value = true
-    }
-  } catch (error) {
-    console.error('註冊失敗:', error)
-  }
-}
-
-// 重新發送驗證信
-const resendEmail = async () => {
-  resendLoading.value = true
-  try {
-    const result = await authStore.resendVerification(registerForm.email)
-    if (result.success) {
-      ElMessage.success('驗證信已重新發送')
-    }
-  } catch (error) {
-    console.error('重新發送失敗:', error)
-  } finally {
-    resendLoading.value = false
-  }
-}
-</script>
 
 <style scoped>
 .register-container {
@@ -353,7 +358,7 @@ const resendEmail = async () => {
   gap: 12px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .register-container {
     padding: 16px;
   }
