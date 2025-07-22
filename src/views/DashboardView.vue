@@ -101,7 +101,7 @@ onMounted(() => {
     <div class="dashboard-container">
       <!-- 頁面標題 -->
       <div class="dashboard-header">
-        <h1>儀表板</h1>
+        <h1>主控臺</h1>
         <p>歡迎回來，{{ authStore.user?.username }}！</p>
       </div>
 

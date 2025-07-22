@@ -90,11 +90,7 @@ onMounted(() => {
         >
           <el-menu-item index="/dashboard">
             <el-icon><House /></el-icon>
-            <span>儀表板</span>
-          </el-menu-item>
-          <el-menu-item index="/urls">
-            <el-icon><Link /></el-icon>
-            <span>我的短網址</span>
+            <span>主控臺</span>
           </el-menu-item>
           <el-menu-item index="/products">
             <el-icon><ShoppingBag /></el-icon>

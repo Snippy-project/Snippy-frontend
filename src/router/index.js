@@ -5,10 +5,8 @@ import Home from '@/views/HomeView.vue'
 import Login from '@/views/LoginView.vue'
 import Register from '@/views/RegisterView.vue'
 import Dashboard from '@/views/DashboardView.vue'
-import Urls from '@/views/UrlsView.vue'
 import Products from '@/views/ProductsView.vue'
 import Orders from '@/views/OrdersView.vue'
-import Profile from '@/views/ProfileView.vue'
 import VerifyEmail from '@/views/VerifyEmailView.vue'
 import ResetPassword from '@/views/ResetPasswordView.vue'
 import NotFound from '@/views/NotFoundView.vue'
@@ -41,12 +39,6 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: '/urls',
-      name: 'urls',
-      component: Urls,
-      meta: { requiresAuth: true },
-    },
-    {
       path: '/products',
       name: 'products',
       component: Products,
@@ -56,12 +48,6 @@ const router = createRouter({
       path: '/orders',
       name: 'orders',
       component: Orders,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/profile',
-      name: 'profile',
-      component: Profile,
       meta: { requiresAuth: true },
     },
     {
