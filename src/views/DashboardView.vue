@@ -135,9 +135,9 @@ onMounted(() => {
             <el-icon><Plus /></el-icon>
             創建短網址
           </el-button>
-          <el-button size="large" @click="$router.push('/urls')" class="action-btn">
+          <el-button size="large" @click="showCreateDomain = true" class="action-btn">
             <el-icon><List /></el-icon>
-            管理短網址
+            自訂域名
           </el-button>
           <el-button size="large" @click="$router.push('/orders')" class="action-btn">
             <el-icon><ShoppingBag /></el-icon>
