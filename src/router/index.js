@@ -9,6 +9,7 @@ import Products from '@/views/ProductsView.vue'
 import Orders from '@/views/OrdersView.vue'
 import VerifyEmail from '@/views/VerifyEmailView.vue'
 import ResetPassword from '@/views/ResetPasswordView.vue'
+import Redirect from '@/views/RedirectView.vue'
 import NotFound from '@/views/NotFoundView.vue'
 
 const router = createRouter({
@@ -60,6 +61,12 @@ const router = createRouter({
       path: '/reset-password',
       name: 'reset-password',
       component: ResetPassword,
+      meta: { requiresAuth: false },
+    },
+    {
+      path: '/:shortId([a-zA-Z0-9]{5,10})',
+      name: 'redirect',
+      component: Redirect,
       meta: { requiresAuth: false },
     },
     {
