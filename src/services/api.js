@@ -3,8 +3,9 @@ import { ElMessage } from 'element-plus'
 
 const api = axios.create({
   baseURL:
-    import.meta.env.VITE_API_BASE_URL ||
-    'https://snippy-backend-production-bc98.up.railway.app/api',
+    process.env.VUE_APP_API_BASE_URL ||
+    'https://snippy-backend-aobc55625.zeabur.app/api' ||
+    import.meta.env.VITE_API_BASE_URL,
   timeout: 10000,
   withCredentials: true,
 })
