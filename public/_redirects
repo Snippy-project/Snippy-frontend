@@ -1,0 +1,5 @@
+# Vue Router History Mode 支援
+/*    /index.html   200
+
+# API 代理（可選）
+/api/*  https://snippy-backend-production-bc98.up.railway.app/api/:splat  200
