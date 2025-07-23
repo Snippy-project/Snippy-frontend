@@ -2,7 +2,9 @@ import axios from 'axios'
 import { ElMessage } from 'element-plus'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  baseURL:
+    import.meta.env.VITE_API_BASE_URL ||
+    'https://snippy-backend-production-bc98.up.railway.app/api',
   timeout: 10000,
   withCredentials: true,
 })
