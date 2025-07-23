@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-cli-service build",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "serve": "vue-cli-service serve"
+    "serve": "vite serve"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
